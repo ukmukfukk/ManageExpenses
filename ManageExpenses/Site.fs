@@ -8,6 +8,7 @@ open WebSharper.UI.Server
 type EndPoint =
     | [<EndPoint "/">] Home
     | [<EndPoint "/about">] About
+    | [<EndPoint "/household">] Household
 
 module Templating =
     open WebSharper.UI.Html
@@ -25,6 +26,7 @@ module Templating =
         [
             "Home" => EndPoint.Home
             "About" => EndPoint.About
+            "Household" => EndPoint.Household
         ]
 
     let Main ctx action (title: string) (body: Doc list) =
@@ -57,11 +59,19 @@ module Site =
             Bundle = "about"
         )
 
+    let HouseholdPage ctx =
+        Content.Page(
+            Templating.Main ctx EndPoint.Household "Household" [
+                div [] [client (Client.Household())]
+            ],
+            Bundle = "household"
+        )
+
     [<Website>]
     let Main =
         Application.MultiPage (fun ctx endpoint ->
             match endpoint with
             | EndPoint.Home -> HomePage ctx
             | EndPoint.About -> AboutPage ctx
+            | EndPoint.Household -> HouseholdPage ctx
         )
-

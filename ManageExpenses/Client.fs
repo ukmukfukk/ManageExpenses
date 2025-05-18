@@ -9,9 +9,11 @@ open WebSharper.UI.Notation
 module Templates =
 
     type MainTemplate = Templating.Template<"Main.html", ClientLoad.FromDocument, ServerLoad.WhenChanged>
+    type HouseholdTemplate = Templating.Template<"Household.html">
 
 [<JavaScript>]
 module Client =
+    let currenthh = Var.Create ""
 
     let Main () =
         let rvReversed = Var.Create ""
@@ -24,4 +26,17 @@ module Client =
                 |> Async.StartImmediate
             )
             .Reversed(rvReversed.View)
+            .Doc()
+
+    let GetCurrentHouseholdAsync =
+        async {
+            let! res = Server.CurrentHousehold()
+            currenthh := res
+        }
+
+    do GetCurrentHouseholdAsync |> Async.StartImmediate
+
+    let Household() =
+        Templates.HouseholdTemplate.Household()             
+            .Currenthh(currenthh.View)
             .Doc()

@@ -10,3 +10,9 @@ module Server =
         async {
             return R input
         }
+
+    [<Rpc>]
+    let CurrentHousehold () =
+        async {
+            return "Kovács család"
+        }
